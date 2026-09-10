@@ -70,6 +70,15 @@ Notes:
 - `make testacc` runs acceptance tests with `TF_ACC=1`
 - `make install` places the local provider binary in your Go bin path
 
+Swagger-derived contract tests are optional because the authoritative OpenAPI
+files are not distributed with this provider. Run them by setting
+`NOOZLE_OPENAPI_DIR` to the directory containing `swagger.yaml` and
+`swagger-terraform.yaml`, for example:
+
+```sh
+NOOZLE_OPENAPI_DIR=/path/to/noozle/docs make test
+```
+
 After any Go change, run `make fmt` and `make lint` before considering the work complete.
 
 ## Using The Provider Locally

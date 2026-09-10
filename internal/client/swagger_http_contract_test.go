@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -40,7 +41,7 @@ type swaggerHTTPRequestBody struct {
 func TestSwaggerDerivedQueryAndOutletLinkHTTPContracts(t *testing.T) {
 	t.Parallel()
 
-	contract := loadSwaggerHTTPContract(t, "../../docs/swagger.yaml")
+	contract := loadSwaggerHTTPContract(t, "swagger.yaml")
 	const tenantID = "t_01JZ8V5Q5B4Z3T2Y1X0W9V8R7Q"
 
 	tests := []struct {
@@ -149,7 +150,7 @@ func TestSwaggerDerivedQueryAndOutletLinkHTTPContracts(t *testing.T) {
 func TestSwaggerDerivedTypedOutletDeleteHTTPContracts(t *testing.T) {
 	t.Parallel()
 
-	contract := loadSwaggerHTTPContract(t, "../../docs/swagger-terraform.yaml")
+	contract := loadSwaggerHTTPContract(t, "swagger-terraform.yaml")
 	deleteOutlets := typedOutletDeleteClients()
 
 	if len(deleteOutlets) != 11 {
@@ -182,7 +183,7 @@ func TestSwaggerDerivedTypedOutletDeleteHTTPContracts(t *testing.T) {
 func TestSwaggerDerivedTypedOutletRootRequestContracts(t *testing.T) {
 	t.Parallel()
 
-	contract := loadSwaggerHTTPContract(t, "../../docs/swagger-terraform.yaml")
+	contract := loadSwaggerHTTPContract(t, "swagger-terraform.yaml")
 	for path, item := range contract.Paths {
 		outletType, ok := strings.CutPrefix(path, "/v1/terraform/")
 		if !ok || strings.Contains(outletType, "/") {
@@ -219,7 +220,12 @@ func typedOutletDeleteClients() map[string]func(*Client, context.Context, int64)
 
 func loadSwaggerHTTPContract(t *testing.T, filename string) swaggerHTTPContract {
 	t.Helper()
-	contents, err := os.ReadFile(filename)
+	contractDirectory := os.Getenv("NOOZLE_OPENAPI_DIR")
+	if contractDirectory == "" {
+		t.Skip("set NOOZLE_OPENAPI_DIR to run Swagger-derived contract tests")
+	}
+
+	contents, err := os.ReadFile(filepath.Join(contractDirectory, filename))
 	if err != nil {
 		t.Fatalf("read Swagger contract: %v", err)
 	}

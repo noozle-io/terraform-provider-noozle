@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -142,7 +143,12 @@ func TestTerraformOpenAPIOutletSchemasMatchContract(t *testing.T) {
 func loadTerraformOpenAPIContract(t *testing.T) terraformOpenAPIContract {
 	t.Helper()
 
-	contents, err := os.ReadFile("../../docs/swagger-terraform.yaml")
+	contractDirectory := os.Getenv("NOOZLE_OPENAPI_DIR")
+	if contractDirectory == "" {
+		t.Skip("set NOOZLE_OPENAPI_DIR to run Swagger-derived contract tests")
+	}
+
+	contents, err := os.ReadFile(filepath.Join(contractDirectory, "swagger-terraform.yaml"))
 	if err != nil {
 		t.Fatalf("read Terraform OpenAPI contract: %v", err)
 	}
