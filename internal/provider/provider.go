@@ -48,6 +48,7 @@ func (p *NoozleProvider) Metadata(ctx context.Context, req provider.MetadataRequ
 
 func (p *NoozleProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		MarkdownDescription: "Manages Noozle queries and delivery outlets through the [Noozle service and API documentation](https://noozle.io).",
 		Attributes: map[string]schema.Attribute{
 			"host": schema.StringAttribute{
 				MarkdownDescription: "Noozle API base URL. Can also be set with `NOOZLE_HOST`.",
